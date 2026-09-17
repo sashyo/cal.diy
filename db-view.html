@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Postgres Booking rows</title>
+<style>
+  :root{
+    --bg:#070b16; --panel:#0c1226; --line:#1c2a4f; --ink:#e7eeff; --muted:#8fa2d6;
+    --dim:#5a6aa0; --cipher:#5fe3ad; --accent:#6f8bff; --prompt:#7fe3b0;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:var(--mono);overflow:hidden}
+  .wrap{padding:40px 48px}
+  .bar{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+  .dot{width:12px;height:12px;border-radius:50%}
+  .r{background:#ff5f57}.y{background:#febc2e}.g{background:#28c840}
+  .tt{margin-left:12px;color:var(--dim);font-size:13px;letter-spacing:.3px}
+  .prompt{font-size:15px;margin:0 0 4px}
+  .prompt .db{color:var(--prompt)}
+  .prompt .kw{color:var(--accent)}
+  .prompt .ident{color:var(--ink)}
+  table{border-collapse:collapse;width:100%;margin-top:14px;font-size:12.5px}
+  th{text-align:left;color:var(--dim);font-weight:600;padding:6px 14px;border-bottom:1px solid var(--line);
+     text-transform:none;letter-spacing:.3px}
+  td{padding:9px 14px;border-bottom:1px solid #12203f;vertical-align:top}
+  td.id{color:var(--muted);width:36px}
+  td.ct{color:var(--cipher);word-break:break-all;line-height:1.5}
+  .rows{color:var(--dim);font-size:13px;margin-top:14px}
+  .note{margin-top:26px;color:var(--muted);font-size:14px;line-height:1.6;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;max-width:92ch}
+  .note b{color:var(--ink);font-weight:600}
+  .key{color:var(--cipher)}
+  .tag{display:inline-block;margin-bottom:18px;font-family:ui-sans-serif,system-ui,sans-serif;
+    text-transform:uppercase;letter-spacing:2px;font-size:11px;color:var(--accent);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+    <span class="tt">psql — calendso@localhost:5450</span></div>
+  <div class="tag">What the Cal.com database actually stores</div>
+  <p class="prompt"><span class="db">calendso=#</span> <span class="kw">SELECT</span> <span class="ident">id, title, attendee_name</span> <span class="kw">FROM</span> <span class="ident">"Booking"</span> <span class="kw">LIMIT</span> 5;</p>
+  <table>
+    <tr><th>id</th><th>title</th><th>attendee_name</th></tr>
+    <tr><td class="id">1</td><td class="ct">ms1:AQAAAAEAAAACQQAAAONtKY1emgFJDtUjys9tiuCMSbgGkNjjxM83OTu/gb5aQNbF31E+VaL6kFXjqJStTTsxMp5tJif0/aRhfzG…</td><td class="ct">ms1:AQAAAAEAAAACRwAAABIrcqDKO049s5Sg+AdJdd5Q90Dzkq9mr8g/tgURvOi50LbwXnwbL/yZ9sWLmqsMWnFHeV9IpbJDNEJG7LP…</td></tr>
+    <tr><td class="id">2</td><td class="ct">ms1:AQAAAAEAAAACQQAAABXej/L4HJt8q9QG8jFFTW0GopkW9Fl+NuiVKFKu9/dBz9PBiip7NgnE75Cktqdd48Imj+fn96T7w7b5XAM…</td><td class="ct">ms1:AQAAAAEAAAACRwAAAPRhpjhi4bKJ5ce3eI2ZgRyZwo5ihk9FAOfkm20AOmQP8YvbDoT8mL3gy2QxVq/F9DkRgHk9rp/05DxtGWT…</td></tr>
+    <tr><td class="id">3</td><td class="ct">ms1:AQAAAAEAAAACUAAAAAMkQcRs8y4hgriH9M9ADgDnhRAI9K97ryuaWOYun3PIciCZ5zdqBZN+kxav9eEDr6ZK+YBpvueNVgOeP9U…</td><td class="ct">ms1:AQAAAAEAAAACRwAAALOtAWor5P0lF6QjhXS6r86upJDHEiA5TR4ADs63TtFw5z+Ha6sQ7suYsKFB1Xp77fU9eXYdPyt5DC8BFHE…</td></tr>
+    <tr><td class="id">4</td><td class="ct">ms1:AQAAAAEAAAACRgAAAM8JjyaNCmkSVqFLtavjFO0WuAB3nMZvHOtA1bjGEu4FkFvK9VGliVQfHVR5g9TVi7hkV25Am/6kKjiNHpn…</td><td class="ct">ms1:AQAAAAEAAAACRwAAAGonYT1HtSPHhWQI9HPlWtiIQWcSjKw1k58VZga1FK3AOXf6928O6N978qNsHo52tu10vARb3if6oIvS6Wk…</td></tr>
+    <tr><td class="id">5</td><td class="ct">ms1:AQAAAAEAAAACRgAAAPHEA+fhcmy95gzh2kKznyM20X3jnvE+JEFQ+UCsPvUfmQgADVKdFrA/vzQ9T3n5bvKAtC46hVJmWoXzW9u…</td><td class="ct">ms1:AQAAAAEAAAACRwAAAPK3Y1KNp/wD8YY2qONt8gbfMTnFEwYPaLvdGci1HudjWODQR/KFFwZH7hZzVZjidTYDEouhJQc4PoR4HhW…</td></tr>
+  </table>
+  <p class="rows">(5 rows)</p>
+  <p class="note">
+    Every personal field is <span class="key">ms1:</span> ciphertext on disk. The vendor key is not in this
+    database, and not in the app - it lives as <b>threshold shares across the Tide ORK cohort</b> and is never
+    assembled here. A stolen database or a leaked backup reveals only this. Next: the same rows, in the live app,
+    for a signed-in user a quorum granted the reading role.
+  </p>
+</div>
+</body>
+</html>

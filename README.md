@@ -51,6 +51,21 @@ Cal.diy is **100% MIT-licensed** with no proprietary "Enterprise Edition" featur
 
 > **Note:** Cal.diy is a self-hosted project. There is no hosted/managed version. You run it on your own infrastructure.
 
+### Data sealing with minidauth (Tide)
+
+This fork seals a booking's title and description and an attendee's name and phone number with
+[minidauth](https://tide.org) and the Tide ORK cohort **before** they reach Postgres. The database, and
+the app process, only ever hold `ms1:` ciphertext. The vendor key is never assembled here: it lives as
+threshold shares across the ORK network. Records are opened again in-request, for a signed-in user only
+if a quorum granted that user the reading role, so a stolen database or a leaked backup reveals nothing,
+and revoking the role in minidauth stops reads everywhere with no change to the app.
+
+A Prisma client extension seals on write and opens on read; the bookings list (built with raw SQL) opens
+through the same reader-gated path. See [`packages/prisma/extensions/`](./packages/prisma/extensions/).
+
+**Demo:** [watch the Cal.diy × minidauth walkthrough](./demo-video/live/minidauth-cal-live.mp4) — the same
+booking rows shown as ciphertext in Postgres, then as plaintext in the live app for the authorised user.
+
 ### Built With
 
 - [Next.js](https://nextjs.org/)

@@ -10,6 +10,7 @@ import { safeStringify } from "@calcom/lib/safeStringify";
 import type { PrismaClient } from "@calcom/prisma";
 import type { Booking } from "@calcom/prisma/client";
 import { Prisma } from "@calcom/prisma/client";
+import { openSealedRecords } from "@calcom/prisma/extensions/minidauth-seal";
 import { BookingStatus, MembershipRole, SchedulingType } from "@calcom/prisma/enums";
 import { EventTypeMetaDataSchema } from "@calcom/prisma/zod-utils";
 import { TRPCError } from "@trpc/server";
@@ -789,6 +790,12 @@ export async function getBookings({
 
   // Enrich attendees with user data
   const enrichedBookings = await enrichAttendeesWithUserData(bookings, kysely);
+
+  // This list is built with Kysely raw SQL, which bypasses the Prisma seal extension, so sealed
+  // columns (Booking.title/description and any nested sealed attendee fields) arrive as ciphertext.
+  // Open them here - reader-gated, one cohort fan-out, and fail-safe (left sealed if there is no
+  // reader in context, the reader lacks the grant, or the sidecar is down) - before returning.
+  await openSealedRecords("booking", enrichedBookings);
 
   return { bookings: enrichedBookings, recurringInfo, totalCount };
 }

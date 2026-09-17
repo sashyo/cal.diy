@@ -151,6 +151,20 @@ async function openResult(model: string, result: any): Promise<void> {
 }
 
 /**
+ * Open sealed fields on records that did NOT come through the Prisma client extension - the bookings
+ * list, for one, is built with Kysely raw SQL, which bypasses the `query` hooks below entirely, so
+ * its `Booking.title`/`description` (and any nested sealed attendee fields) arrive as ciphertext.
+ * Call this on such results before returning them to the client. Same reader-gated sidecar `/open`,
+ * same one-fan-out batching, and the same fail-safe: with no reader in context, an ungranted reader,
+ * or the sidecar down, the fields stay sealed rather than the read crashing. A no-op when sealing is
+ * off, and it descends into the SEALED relations (a booking's attendees) exactly like a Prisma read.
+ */
+export async function openSealedRecords(model: string, records: any): Promise<void> {
+  if (!enabled() || !records) return;
+  await openResult(model, records);
+}
+
+/**
  * Wrap the Prisma client so the models in SEALED seal on write and open on read. Append it last in
  * the `.$extends(...)` chain so it is the outermost layer: it seals inbound `data` before the query
  * reaches Postgres, and opens the records on the way back out.

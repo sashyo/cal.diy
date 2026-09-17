@@ -29,6 +29,7 @@
     "@prisma/client": "6.16.1",
     "@prisma/extension-accelerate": "1.3.0",
     "@prisma/generator-helper": "6.16.2",
+    "minidauth-prisma": "^0.1.0",
     "prisma": "6.16.1",
     "prisma-kysely": "2.2.0",
     "uuid": "8.3.2",

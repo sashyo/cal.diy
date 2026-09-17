@@ -5,6 +5,7 @@ import { bookingIdempotencyKeyExtension } from "./extensions/booking-idempotency
 import { disallowUndefinedDeleteUpdateManyExtension } from "./extensions/disallow-undefined-delete-update-many";
 import { excludeLockedUsersExtension } from "./extensions/exclude-locked-users";
 import { excludePendingPaymentsExtension } from "./extensions/exclude-pending-payment-teams";
+import { minidauthSealExtension } from "./extensions/minidauth-seal";
 import { PrismaClient, type Prisma } from "./generated/prisma/client";
 
 const connectionString = process.env.DATABASE_URL || "";
@@ -68,7 +69,10 @@ export const customPrisma = (options?: Prisma.PrismaClientOptions) => {
     .$extends(excludeLockedUsersExtension())
     .$extends(excludePendingPaymentsExtension())
     .$extends(bookingIdempotencyKeyExtension())
-    .$extends(disallowUndefinedDeleteUpdateManyExtension()) as unknown as PrismaClient;
+    .$extends(disallowUndefinedDeleteUpdateManyExtension())
+    // Outermost layer: seals inbound personal fields before Postgres, opens them on the way out.
+    // No-op unless MINIDAUTH_SEAL_URL is set.
+    .$extends(minidauthSealExtension()) as unknown as PrismaClient;
 };
 
 // FIXME: Due to some reason, there are types failing in certain places due to the $extends. Fix it and then enable it
@@ -80,7 +84,10 @@ export const prisma: PrismaClient = baseClient
   .$extends(excludeLockedUsersExtension())
   .$extends(excludePendingPaymentsExtension())
   .$extends(bookingIdempotencyKeyExtension())
-  .$extends(disallowUndefinedDeleteUpdateManyExtension()) as unknown as PrismaClient;
+  .$extends(disallowUndefinedDeleteUpdateManyExtension())
+  // Outermost layer: seals inbound personal fields before Postgres, opens them on the way out.
+  // No-op unless MINIDAUTH_SEAL_URL is set.
+  .$extends(minidauthSealExtension()) as unknown as PrismaClient;
 
 // This prisma instance is meant to be used only for READ operations.
 // If self hosting, feel free to leave INSIGHTS_DATABASE_URL as empty and `readonlyPrisma` will default to `prisma`.

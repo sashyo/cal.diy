@@ -1,5 +1,6 @@
 import { getUserSession } from "@calcom/features/auth/lib/userFromSessionUtils";
 import logger from "@calcom/lib/logger";
+import { withMinidauthReader } from "@calcom/prisma/extensions/minidauth-reader";
 import { setUser as SentrySetUser } from "@sentry/nextjs";
 import { TRPCError } from "@trpc/server";
 import { middleware } from "../trpc";
@@ -18,9 +19,13 @@ export const isAuthed = middleware(async ({ ctx, next }) => {
 
   SentrySetUser({ id: user.id });
 
-  return next({
-    ctx: { user, session },
-  });
+  // Run the rest of the request as this verified user for minidauth, so any sealed field a Prisma
+  // read returns opens as them (gated by their quorum grant), and never for an unauthenticated caller.
+  return withMinidauthReader(String(user.id), () =>
+    next({
+      ctx: { user, session },
+    })
+  );
 });
 
 export const isAdminMiddleware = isAuthed.unstable_pipe(({ ctx, next }) => {
